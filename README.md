@@ -14,19 +14,10 @@ The project is entirely **open-source** and all contributions are welcome. Feel 
 
 The aim of the project is to improve the players' experience in fighting against the AI by giving additional information to the AI and by assisting it in its decisions.
 
-### Core features
-- Suppressive fire
-- Line-of-Sight discover ability
-- Inter-group communication (propagation of information)
-- Long-Distance-Fire detection
-- Map analysis to improve terrain knowledge
-- AI skill improvement
 
-#### Possible features
-- Support system (CAS, Friend/Foe ratio analysis)
-- Transport system (Group A may automatically transport Group B if capable to do so)
-- Cover and concealment
-- Fortify
+### Core features
+Will follow
+
 
 ### Guides & how-tos
 Will follow
