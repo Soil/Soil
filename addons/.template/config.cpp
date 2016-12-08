@@ -10,8 +10,8 @@ class CfgPatches {
         weapons[]        = {};
         VERSION_CONFIG;
 
-        authors[]        = {"BaerMitUmlaut"};
-        #include "required_addons.hpp"
+        authors[]        = {};
+        requiredAddons[] = {"soil_core"};
     };
 };
 
