@@ -2,15 +2,16 @@
 
 class CfgPatches {
     class ADDON {
-        name = COMPONENT_NAME;
-        units[] = {};
-        weapons[] = {};
-        requiredVersion = 0.1;
-        #include "required_addons.hpp"
-        authors[] = {"BaerMitUmlaut"};
-        author = "Soil Team";
-        authorUrl = "https://github.com/Soil/Soil";
+        author           = "Soil Team";
+        authorUrl        = "https://github.com/Soil/Soil";
+        name             = COMPONENT_NAME;
+        requiredVersion  = 0.1;
+        units[]          = {};
+        weapons[]        = {};
         VERSION_CONFIG;
+
+        authors[]        = {"BaerMitUmlaut"};
+        #include "required_addons.hpp"
     };
 };
 
