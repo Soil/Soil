@@ -12,7 +12,7 @@ def main():
     for component in os.listdir(componentspath):
         if os.path.isdir(os.path.join(componentspath, component)):
             if (component.startswith(".")):
-                print("Component {} has no valid name".format(component))
+                print("Skipping {}.".format(component))
                 continue
             try:
                 subprocess.check_output([
