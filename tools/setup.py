@@ -1,119 +1,132 @@
 #!/usr/bin/env python3
 
-########################
-#  Soil Setup Script  #
-########################
-
+import argparse
+import msvcrt
 import os
-import sys
-import shutil
-import platform
+import re
 import subprocess
+import sys
 import winreg
 
-######## GLOBALS #########
-MAINDIR = "x"
-PROJECTDIR = "Soil"
-CBA = "P:\\x\\cba"
-##########################
+projectroot = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 def main():
-    FULLDIR = "{}\\{}".format(MAINDIR,PROJECTDIR)
-    print("""
-  #######################################
-  # Soil Development Environment Setup #
-  #######################################
+    os.chdir(projectroot)
 
-  This script will create your Soil dev environment for you.
+    parser = argparse.ArgumentParser(description = "Soil development setup script.")
+    parser.add_argument("-l", "--link",
+        action = "store_true",
+        help = "create the symlink between the Arma directory and the repository")
+    parser.add_argument("-p", "--pdrive",
+        action = "store_true",
+        help = "create the symlink between the P drive and the repository")
+    parser.add_argument("-x", "--extension",
+        action = "store_true",
+        help = "initializes the extension submodule")
 
-  Before you run this, you should already have:
-    - The Arma 3 Tools installed properly via Steam
-    - A properly set up P-drive
+    if len(sys.argv) == 1:
+        args = argparse.Namespace(link = True, pdrive = True, extension = True)
+    else:
+        args = parser.parse_args()
 
-  If you have not done those things yet, please abort this script in the next step and do so first.
+    if args.link:
+        createSymlinkArma()
+    if args.pdrive:
+        createSymlinkPDrive()
+    if args.extension:
+        setupSubmodule()
 
-  This script will create two hard links on your system, both pointing to your Soil project folder:
-    [Arma 3 installation directory]\\{} => Soil project folder
-    P:\\{}                              => Soil project folder
+    print("\nSetup finished!")
 
-  It will also copy the required CBA includes to {}, if you do not have the CBA source code already.""".format(FULLDIR,FULLDIR,CBA))
-    print("\n")
-
+def findArma():
+    reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
     try:
-        reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
-        key = winreg.OpenKey(reg,
-                r"SOFTWARE\Wow6432Node\bohemia interactive\arma 3")
-        armapath = winreg.EnumValue(key,1)[1]
-    except:
-        print("Failed to determine Arma 3 Path.")
-        return 1
+        key = winreg.OpenKey(reg, r"SOFTWARE\Valve\Steam")
+    except Exception as e:
+        key = winreg.OpenKey(reg, r"SOFTWARE\WOW6432Node\Valve\Steam")
 
-    if not os.path.exists("P:\\"):
-        print("No P-drive detected.")
-        return 2
+    valueCount = winreg.QueryInfoKey(key)[1]
+    for i in range(0, valueCount - 1):
+        if winreg.EnumValue(key, i)[0] == "InstallPath":
+            steamPath = winreg.EnumValue(key, i)[1]
+            break
 
-    scriptpath = os.path.realpath(__file__)
-    projectpath = os.path.dirname(os.path.dirname(scriptpath))
+    steamLibraryPath = steamPath + "\\steamapps\\common"
+    if os.path.isdir(steamLibraryPath + "\\Arma 3"):
+        return steamLibraryPath + "\\Arma 3"
+    else:
+        # Find and check other steam libraries
+        with open(steamPath + "\\config\\config.vdf", "r") as f:
+            steamConfig = f.readlines()
 
-    print("# Detected Paths:")
-    print("  Arma Path:    {}".format(armapath))
-    print("  Project Path: {}".format(projectpath))
+        pattern = re.compile(r".*BaseInstallFolder_\d+\"\s+\"([^\"]+)\"")
+        for line in steamConfig:
+            match = pattern.match(line)
+            if match:
+                steamLibraryPath = match.group(1).encode().decode("unicode_escape")
+                if os.path.isdir(steamLibraryPath + "\\Arma 3"):
+                    return steamLibraryPath + "\\Arma 3"
 
-    repl = input("\nAre these correct? (y/n): ")
-    if repl.lower() != "y":
-        return 3
+def createSymlinkArma():
+    armaDir = findArma()
+    if armaDir:
+        print("· Found Arma installation at\n  \"{}\"".format(armaDir))
+    else:
+        while not armaDir:
+            armaExe = input("× Could not find Arma, please drag and drop your arma3.exe in here:\n  ")
+            if armaExe[0] == "\"":
+                armaExe = armaExe[1:-1]
+            if os.path.exists(armaExe) and armaExe[-9:] == "arma3.exe":
+                armaDir = os.path.dirname(armaExe)
 
-    print("\n# Creating links ...")
+    if os.path.exists(armaDir + "\\x\\soil"):
+        print("· Found existing symlink in Arma directory")
+    else:
+        if not os.path.isdir(armaDir + "\\x"):
+            os.makedirs(armaDir + "\\x")
+        subprocess.run(["mklink", "/J", armaDir + "\\x\\soil", projectroot], stdout = subprocess.PIPE, shell = True)
+        print("· Created symlink in Arma directory")
 
-    if os.path.exists("P:\\{}\\{}".format(MAINDIR,PROJECTDIR)):
-        print("Link on P: already exists. Please finish the setup manually.")
-        return 4
+def createSymlinkPDrive():
+    while not os.path.exists("P:"):
+        response = input("× Cannot find the workdrive to create a symlink.\n  Do you want to skip this step? [Y/n] ")
+        if response.lower() != "n":
+            return
 
-    if os.path.exists(os.path.join(armapath, MAINDIR, PROJECTDIR)):
-        print("Link in Arma directory already exists. Please finish the setup manually.")
-        return 5
+    if os.path.exists("P:\\x\\soil"):
+        print("· Found existing symlink on the workdrive")
+    else:
+        if not os.path.isdir("P:\\x"):
+            os.makedirs(armaDir + "\\x")
+        subprocess.run(["mklink", "/J", "P:\\x\\soil", projectroot], stdout = subprocess.PIPE, shell = True)
+        print("· Created symlink on the workdrive")
 
+def hasGit():
     try:
-        if not os.path.exists("P:\\{}".format(MAINDIR)):
-            os.makedirs("P:\\{}".format(MAINDIR))
-        if not os.path.exists(os.path.join(armapath, MAINDIR)):
-            os.makedirs(os.path.join(armapath, MAINDIR))
+        subprocess.run(["git", "--version"], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        return True
+    except Exception as e:
+        return False
 
-        subprocess.call(["cmd", "/c", "mklink", "/J", "P:\\{}\\{}".format(MAINDIR,PROJECTDIR), projectpath])
-        subprocess.call(["cmd", "/c", "mklink", "/J", os.path.join(armapath, MAINDIR, PROJECTDIR), projectpath])
-    except:
-        raise
-        print("Something went wrong during the link creation. Please finish the setup manually.")
-        return 6
+def setupSubmodule():
+    if not hasGit():
+        print("× Cannot find git, skipping submodule initialization")
+        return
 
-    print("# Links created successfully.")
-
-
-    print("\n# Copying required CBA includes ...")
-
-    if os.path.exists(CBA):
-        print("{} already exists, skipping.".format(CBA))
-        return -1
-
-    try:
-        shutil.copytree(os.path.join(projectpath, "tools", "cba"), CBA)
-    except:
-        raise
-        print("Something went wrong while copying CBA includes. Please copy tools\\cba to {} manually.".format(CBA))
-        return 7
-
-    print("# CBA includes copied successfully to {}.".format(CBA))
-
-    return 0
-
+    if os.listdir(projectroot + "\\extension"):
+        print("· Extension submodule already initialized")
+    else:
+        print("· Initializing extension submodule")
+        process = subprocess.run(["git", "submodule", "init"], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        if process.returncode != 0:
+            print("× Failed to initialize submodule:")
+            print(process.stderr.decode())
+            return
+        process = subprocess.run(["git", "submodule", "update"], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        if process.returncode != 0:
+            print("× Failed to initialize submodule:")
+            print(process.stderr.decode())
+            return
 
 if __name__ == "__main__":
-    exitcode = main()
-
-    if exitcode > 0:
-        print("\nSomething went wrong during the setup. Make sure you run this script as administrator. If these issues persist, please follow the instructions on the Soil wiki to perform the setup manually.")
-    else:
-        print("\nSetup successfully completed.")
-
-    input("\nPress enter to exit ...")
-    sys.exit(exitcode)
+    sys.exit(main())
