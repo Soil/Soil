@@ -8,3 +8,5 @@ python:
 script:
 - python3 tools/sqf_validator.py
 - python3 tools/config_style_checker.py
+notifications:
+  slack: soilproject:4kO0SaTT4eFUjASKZGE1vZAP
