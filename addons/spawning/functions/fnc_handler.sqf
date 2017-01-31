@@ -1,10 +1,10 @@
 #include "script_component.hpp"
 
 [{
-    if(count GVAR(SpawnQueue) < 1) exitWith {};
+    if(count GVAR(spawnQueue) < 1) exitWith {};
 
     // Select oldest Spawn Request
-    private _entry = GVAR(SpawnQueue) deleteAt 0;
+    private _entry = GVAR(spawnQueue) deleteAt 0;
 
     // And create group or spawn unit
     if (_entry isEqualType []) then {

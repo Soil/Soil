@@ -7,3 +7,8 @@
     #undef PREP
     #define PREP(fncName) [QPATHTOF(functions\DOUBLES(fnc,fncName).sqf), QFUNC(fncName)] call CBA_fnc_compileFunction
 #endif
+
+////////////
+/// MISC ///
+////////////
+#define EVALPOS(VAR)    (if IS_STRING(VAR) then { VAR = getMarkerPos VAR } else { if IS_OBJECT(VAR) then { VAR = getPosATL VAR }})
