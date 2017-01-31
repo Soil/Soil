@@ -142,6 +142,13 @@
         "", \
         ENABLE_CACHING \
     ] call EFUNC(core,compileFunction)
+#define PREP_API(funcName) \
+    [ \
+        QFUNCMAIN(funcName), \
+        QPATHTOF(functions\DOUBLES(fnc,funcName).sqf), \
+        QPATHTOEF(core,script_header_api.hpp), \
+        ENABLE_CACHING \
+    ] call EFUNC(core,compileFunction)
 
 #define RETURN breakOut "SOIL_ROOT_SCOPE"
 #ifdef DEBUG_MODE_FULL
