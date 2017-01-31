@@ -6,5 +6,6 @@ ADDON = false;
 
 // Define Variables
 GVAR(spawnQueue) = [];
+GVAR(currentGroup) = grpNull;
 
 ADDON = true;

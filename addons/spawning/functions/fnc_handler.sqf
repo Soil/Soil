@@ -8,18 +8,18 @@
 
     // And create group or spawn unit
     if (_entry isEqualType []) then {
-        params ["_type", "_side", "_position"];
+        _entry params ["_type", "_side", "_position"];
         GVAR(currentGroup) = createGroup _side;
             
         {
-            params ["_key","_value"];
+            _x params ["_key","_value"];
             GVAR(currentGroup) setVariable [_key,_value];
         } forEach [
             ["position",_position]
         ];
         // ToDo: Expand parameters like value, unittype, AT capability, vehicles etc
     } else {
-        private _position = GVAR(currentGroup) getVariable "position";                         ]
+        private _position = GVAR(currentGroup) getVariable "position";
 
         // ToDo: Differentiate between createUnit and createVehicle
 

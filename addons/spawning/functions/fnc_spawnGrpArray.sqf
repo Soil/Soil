@@ -12,12 +12,15 @@
 //  ["type","side","position"]
 //  Units
 
-
-params [
-    ["_side",EGVAR(enemySide),[west]],
-    ["_units",[],[[]]],
-    ["_position"]
+diag_log str _this;
+/*params [
+    ["_position"],
+    ["_side",east,[west]],
+    ["_units",[],[[]]]
     ];
+*/
+params ["_position","_side","_units"];
+
 
 private _type = "inf";
 
