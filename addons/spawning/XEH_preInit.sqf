@@ -6,6 +6,5 @@ ADDON = false;
 
 // Define Variables
 GVAR(spawnQueue) = [];
-GVAR(groupParams) = [["position",_position]]; //,["strength",_strength];
 
 ADDON = true;

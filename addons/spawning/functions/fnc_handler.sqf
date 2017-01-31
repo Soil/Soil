@@ -14,8 +14,10 @@
         {
             params ["_key","_value"];
             GVAR(currentGroup) setVariable [_key,_value];
-        } forEach [GVAR(groupParams)];
-        // ToDo: Expand parameters like unittype, AT capability, vehicles etc
+        } forEach [
+            ["position",_position]
+        ];
+        // ToDo: Expand parameters like value, unittype, AT capability, vehicles etc
     } else {
         private _position = GVAR(currentGroup) getVariable "position";                         ]
 
