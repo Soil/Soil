@@ -4,6 +4,8 @@ ADDON = false;
 
 #include "XEH_PREP.hpp"
 
-GVAR(groups) = [];
+// Define Variables
+GVAR(spawningQueue) = [];
+GVAR(currentGroup) = grpNull;
 
 ADDON = true;

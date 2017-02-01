@@ -162,3 +162,8 @@
             _ret breakOut "SOIL_ROOT_SCOPE"; \
         }
 #endif
+
+////////////
+/// MISC ///
+////////////
+#define EVALPOS(VAR)    (if IS_STRING(VAR) then { VAR = getMarkerPos VAR } else { if IS_OBJECT(VAR) then { VAR = getPosATL VAR }})
