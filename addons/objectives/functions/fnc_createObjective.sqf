@@ -13,13 +13,13 @@
 #include "script_component.hpp"
 params ["_center", "_radius", ["_filter", {true}]];
 
-private _objective = call CBA_fnc_createNamespace;
-_objective setVariable [QGVAR(center), _center];
+private _objective = [true] call CBA_fnc_createNamespace;
+_objective setVariable [QGVAR(center), _center, true];
 
 // Get all buildings and apply filter
-private _buildings = _center nearestObjects [_center, ["House"], _radius, false];
+private _buildings = nearestObjects [_center, ["House"], _radius, false];
 _buildings = _buildings select _filter;
-_objective setVariable [QGVAR(buildings), _buildings];
+_objective setVariable [QGVAR(buildings), _buildings, true];
 
 GVAR(objectives) pushBack _objective;
 
