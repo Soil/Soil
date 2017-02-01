@@ -1,10 +1,20 @@
+/*
+ * Author: Soil Team
+ * The main handler function for spawning units from the Queue
+ *
+ * Arguments:
+ * None
+ *
+ * Return Value:
+ * None
+ */
 #include "script_component.hpp"
 
 [{
-    if(count GVAR(spawnQueue) < 1) exitWith {};
+    if(count GVAR(spawningQueue) < 1) exitWith {};
 
     // Select oldest Spawn Request
-    private _entry = GVAR(spawnQueue) deleteAt 0;
+    private _entry = GVAR(spawningQueue) deleteAt 0;
 
     // And create group or spawn unit
     if (_entry isEqualType []) then {
@@ -15,14 +25,13 @@
             _x params ["_key","_value"];
             GVAR(currentGroup) setVariable [_key,_value];
         } forEach [
-            ["position",_position]
+            [QGVAR(spawnPosition),_position]
         ];
         // ToDo: Expand parameters like value, unittype, AT capability, vehicles etc
     } else {
-        private _position = GVAR(currentGroup) getVariable "position";
+        private _position = GVAR(currentGroup) getVariable QGVAR(spawnPosition);
 
         // ToDo: Differentiate between createUnit and createVehicle
-
         private _unit = createVehicle [_entry, _position, [], 0, "NONE"];
         [_unit] joinSilent GVAR(currentGroup);
     };

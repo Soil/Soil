@@ -1,26 +1,22 @@
+/*
+ * Author: Soil Team
+ * Adds a unit composition to the Queue where the input parameters are given as an array
+ *
+ * Arguments:
+ * 0: Position (Marker, Pos, Object, etc)  <ARRAY, STRING, OBJECT>
+ * 1: Side                                 <SIDE>
+ * 2: Unit Array                           <ARRAY>
+ *
+ * Return Value:
+ * TRUE on success <BOOL>
+ */
 #include "script_component.hpp"
 
-//ToDo HC Stuff
-
-// Input Params:
-//  0: Side
-//  1: Unit Array
-//  2: Position (Marker, Pos, Object, etc)
-//
-// Output Params:
-//  Push to GVAR(spawnQueue)
-//  ["type","side","position"]
-//  Units
-
-diag_log str _this;
-/*params [
-    ["_position"],
+params [
+    "_position",
     ["_side",east,[west]],
     ["_units",[],[[]]]
     ];
-*/
-params ["_position","_side","_units"];
-
 
 private _type = "inf";
 
@@ -75,8 +71,8 @@ if (_tanks > 0) then {
 };
 
 // ToDo: Maybe an atomic write is required here
-GVAR(spawnQueue) pushBack [_type,_side,_position];
-GVAR(spawnQueue) append _unitarray;
+GVAR(spawningQueue) pushBack [_type,_side,_position];
+GVAR(spawningQueue) append _unitarray;
 
 
 true

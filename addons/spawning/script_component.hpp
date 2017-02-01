@@ -5,7 +5,7 @@
 // #define DEBUG_MODE_FULL
 // #define DISABLE_COMPILE_CACHE
 
-#ifdef DEBUG_ENABLED_TEMPLATE
+#ifdef DEBUG_ENABLED_SPAWNING
     #define DEBUG_MODE_FULL
 #endif
 

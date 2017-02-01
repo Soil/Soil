@@ -1,2 +1,2 @@
-PREP(handler);
+PREP(handleSpawning);
 PREP(spawnGrpArray);
