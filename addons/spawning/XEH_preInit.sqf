@@ -7,5 +7,6 @@ ADDON = false;
 // Define Variables
 GVAR(spawningQueue) = [];
 GVAR(currentGroup) = grpNull;
+GVAR(allCfgGroups) = call CBA_fnc_hashCreate;
 
 ADDON = true;
