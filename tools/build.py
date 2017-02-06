@@ -9,10 +9,14 @@ def main():
     componentspath = os.path.join(projectroot, "addons")
     buildpath = componentspath
 
+    for file in os.listdir(buildpath):
+        if file[-4:] == ".pbo":
+            os.unlink(os.path.join(buildpath, file))
+
     for component in os.listdir(componentspath):
         if os.path.isdir(os.path.join(componentspath, component)):
-            if (component.startswith(".")):
-                print("Skipping {}.".format(component))
+            if component.startswith(".") or not os.listdir(os.path.join(componentspath, component)):
+                print("  Skipping {}.".format(component))
                 continue
             try:
                 subprocess.check_output([
@@ -26,9 +30,9 @@ def main():
                     os.path.join(buildpath, "soil_{}.pbo".format(component.lower()))
                 ], stderr = subprocess.STDOUT)
             except:
-                print("Failed to build {}.".format(component))
+                print("  Failed to build {}".format(component))
             else:
-                print("Successfully built {}.".format(component))
+                print("  Successfully built {}".format(component))
 
 if __name__ == "__main__":
     sys.exit(main())

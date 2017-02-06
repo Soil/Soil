@@ -64,6 +64,7 @@ def findArma():
             match = pattern.match(line)
             if match:
                 steamLibraryPath = match.group(1).encode().decode("unicode_escape")
+                steamLibraryPath += "\\steamapps\\common"
                 if os.path.isdir(steamLibraryPath + "\\Arma 3"):
                     return steamLibraryPath + "\\Arma 3"
 
